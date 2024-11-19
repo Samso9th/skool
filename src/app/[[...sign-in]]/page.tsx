@@ -9,16 +9,33 @@ import { useEffect } from "react";
 
 const LoginPage = () => {
   const { isLoaded, isSignedIn, user } = useUser();
-
   const router = useRouter();
+  
+  console.log('Auth State:', { isLoaded, isSignedIn });
+  console.log('User Object:', user);
+  console.log('User Metadata:', user?.publicMetadata);
 
   useEffect(() => {
-    const role = user?.publicMetadata.role;
+    if (!isLoaded) {
+      console.log('Still loading...');
+      return;
+    }
+
+    if (!isSignedIn || !user) {
+      console.log('Not signed in or no user');
+      return;
+    }
+
+    const role = user?.publicMetadata?.role;
+    console.log('User Role:', role);
 
     if (role) {
+      console.log('Redirecting to:', `/${role}`);
       router.push(`/${role}`);
+    } else {
+      console.log('No role found in metadata');
     }
-  }, [user, router]);
+  }, [isLoaded, isSignedIn, user, router]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-lamaSkyLight">
